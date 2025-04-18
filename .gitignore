@@ -17,3 +17,4 @@ node_modules
 *.coverage.*
 *.mypy_cache
 *.pytest_cache
+.angular
