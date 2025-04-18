@@ -46,7 +46,7 @@ def get_bucket_model(well_name, channel_name):
     _bucket_models[table_name] = Bucket
     
     # Create the table if it doesn't exist
-    if not engine.dialect.has_table(engine, table_name):
+    if not inspect(engine).has_table(table_name):
         Base.metadata.create_all(engine, tables=[Bucket.__table__])
     
     return Bucket
@@ -87,7 +87,7 @@ def get_bucket_model_by_names(well_name, channel_name):
         return _bucket_models[table_name]
     
     # Check if table exists in database
-    if not engine.dialect.has_table(engine, table_name):
+    if not inspect(engine).has_table(table_name):
         return None
     
     # Create and return the model
