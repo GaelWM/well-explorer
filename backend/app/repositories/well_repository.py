@@ -25,7 +25,9 @@ class WellRepository:
             longitude=well.longitude,
             lift_type=well.lift_type,
             region=well.region,
-            installation_date=well.installation_date
+            installation_date=well.installation_date,
+            depth=well.depth,
+            status=well.status,
         )
         db.add(db_well)
         db.commit()
