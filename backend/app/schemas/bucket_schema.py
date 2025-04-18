@@ -1,6 +1,6 @@
 from datetime import datetime
 from typing import Optional, List, Dict, Any
-from pydantic import BaseModel # type: ignore
+from pydantic import BaseModel, ConfigDict # type: ignore
 
 # Schema for a data point in a bucket
 class BucketDataBase(BaseModel):
@@ -19,8 +19,7 @@ class BucketDataBatch(BaseModel):
 class BucketDataOut(BucketDataBase):
     id: int
     
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True, arbitrary_types_allowed=True)
 
 # Schema for statistics of a bucket
 class BucketStatistics(BaseModel):

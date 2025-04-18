@@ -6,7 +6,7 @@ from sqlalchemy import func, inspect # type: ignore
 from app.models.bucket import get_bucket_model
 from app.models.channel_data import ChannelData
 from app.models.well import Well
-from app.schemas.channel_data_schema import BucketDataCreate, BucketDataBatch
+from app.schemas.bucket_schema import BucketDataCreate, BucketDataBatch
 
 class BucketRepository:
     @staticmethod

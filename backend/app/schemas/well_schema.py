@@ -1,7 +1,7 @@
 from datetime import date
 from typing import List, Optional
 from app.models.channel_data import ChannelData
-from pydantic import BaseModel, Field # type: ignore
+from pydantic import BaseModel, Field, ConfigDict # type: ignore
 
 # Shared properties
 class WellBase(BaseModel):
@@ -33,8 +33,7 @@ class WellUpdate(BaseModel):
 class WellInDBBase(WellBase):
     id: int
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True, arbitrary_types_allowed=True)
 
 # Properties to return to client
 class Well(WellInDBBase):
