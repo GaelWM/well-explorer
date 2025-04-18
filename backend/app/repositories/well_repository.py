@@ -2,7 +2,7 @@ from typing import List, Optional
 from sqlalchemy.orm import Session # type: ignore
 
 from app.models.well import Well
-from backend.app.schemas.well_schema import WellCreate, WellUpdate
+from app.schemas.well_schema import WellCreate, WellUpdate
 
 class WellRepository:
     @staticmethod

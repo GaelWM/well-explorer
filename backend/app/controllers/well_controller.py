@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session # type: ignore
 from fastapi import HTTPException # type: ignore
 
 from app.repositories.well_repository import WellRepository
-from backend.app.schemas.well_schema import Well, WellCreate, WellUpdate
+from app.schemas.well_schema import Well, WellCreate, WellUpdate
 
 class WellController:
     @staticmethod

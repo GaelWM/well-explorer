@@ -1,6 +1,6 @@
 from datetime import date
 from typing import List, Optional
-from backend.app.models.channel_data import ChannelData
+from app.models.channel_data import ChannelData
 from pydantic import BaseModel, Field # type: ignore
 
 # Shared properties

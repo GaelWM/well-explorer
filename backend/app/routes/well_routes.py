@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session # type: ignore
 
 from app.core.database import get_db
 from app.controllers.well_controller import WellController
-from backend.app.schemas.well_schema import Well, WellCreate, WellUpdate
+from app.schemas.well_schema import Well, WellCreate, WellUpdate
 
 router = APIRouter()
 
