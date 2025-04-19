@@ -1,5 +1,5 @@
-from datetime import datetime
-from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, UniqueConstraint # type: ignore
+from datetime import date, datetime
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, UniqueConstraint, Date # type: ignore
 from sqlalchemy.orm import relationship # type: ignore
 
 from app.core.database import Base
@@ -12,6 +12,8 @@ class ChannelData(Base):
     name = Column(String, nullable=False, index=True)
     data_from = Column(DateTime, nullable=True)  # Nullable until data is added
     data_to = Column(DateTime, nullable=True)    # Nullable until data is added
+    created_at = Column(DateTime, nullable=False, default=datetime.today)
+    updated_at = Column(DateTime, nullable=False, default=datetime.today, onupdate=date.today)
     
     # Define the relationship back to Well
     well = relationship("Well", back_populates="channels")

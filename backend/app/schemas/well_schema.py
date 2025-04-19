@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime
 from typing import Optional, List
 from pydantic import BaseModel, ConfigDict, Field, field_validator # type: ignore
 
@@ -15,6 +15,8 @@ class WellBase(BaseModel):
     installation_date: Optional[date] = Field(None, description="Date when the well was installed")
     depth: Optional[float] = Field(None, description="Depth of the well in meters")
     status: Optional[str] = Field(None, description="Status of the well (e.g., active, inactive)")
+    created_at: datetime = Field(default_factory=datetime.today, description="Creation date of the well")
+    updated_at: datetime = Field(default_factory=datetime.today, description="Last update date of the well")
     
     @field_validator('name', 'region')
     @classmethod
@@ -37,6 +39,8 @@ class WellUpdate(BaseModel):
     installation_date: Optional[date] = Field(None, description="Date when the well was installed")
     depth: Optional[float] = Field(None, description="Depth of the well in meters")
     status: Optional[str] = Field(None, description="Status of the well (e.g., active, inactive)")
+    created_at: Optional[datetime] = Field(None, description="Creation date of the well")
+    updated_at: Optional[datetime] = Field(None, description="Last update date of the well")
     
     @field_validator('name', 'region')
     @classmethod

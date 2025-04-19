@@ -7,6 +7,8 @@ class ChannelDataBase(BaseModel):
     name: str = Field(..., description="Name of the channel data", min_length=1)
     data_from: Optional[datetime] = Field(None, description="Start date of the data range")
     data_to: Optional[datetime] = Field(None, description="End date of the data range")
+    created_at: datetime = Field(default_factory=datetime.now, description="Creation date of the channel data")
+    updated_at: datetime = Field(default_factory=datetime.now, description="Last update date of the channel data")
 
 # Properties to receive on ChannelData creation
 class ChannelDataCreate(ChannelDataBase):
@@ -17,6 +19,8 @@ class ChannelDataUpdate(BaseModel):
     name: Optional[str] = Field(None, description="Name of the channel data", min_length=1)
     data_from: Optional[datetime] = Field(None, description="Start date of the data range")
     data_to: Optional[datetime] = Field(None, description="End date of the data range")
+    created_at: Optional[datetime] = Field(None, description="Creation date of the channel data")
+    updated_at: Optional[datetime] = Field(None, description="Last update date of the channel data")
 
 # Properties shared by models stored in DB
 class ChannelDataInDBBase(ChannelDataBase):
