@@ -1,7 +1,6 @@
-from dataclasses import Field
 from datetime import datetime
 from typing import Optional
-from pydantic import BaseModel, ConfigDict # type: ignore
+from pydantic import BaseModel, ConfigDict, Field # type: ignore
 
 # Shared properties
 class ChannelDataBase(BaseModel):
