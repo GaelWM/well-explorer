@@ -1,12 +1,13 @@
+from dataclasses import Field
 from datetime import datetime
 from typing import Optional
 from pydantic import BaseModel, ConfigDict # type: ignore
 
 # Shared properties
 class ChannelDataBase(BaseModel):
-    name: str
-    data_from: Optional[datetime] = None
-    data_to: Optional[datetime] = None
+    name: str = Field(..., description="Name of the channel data", min_length=1)
+    data_from: Optional[datetime] = Field(None, description="Start date of the data range")
+    data_to: Optional[datetime] = Field(None, description="End date of the data range")
 
 # Properties to receive on ChannelData creation
 class ChannelDataCreate(ChannelDataBase):
@@ -14,9 +15,9 @@ class ChannelDataCreate(ChannelDataBase):
 
 # Properties to receive on ChannelData update
 class ChannelDataUpdate(BaseModel):
-    name: Optional[str] = None
-    data_from: Optional[datetime] = None
-    data_to: Optional[datetime] = None
+    name: Optional[str] = Field(None, description="Name of the channel data", min_length=1)
+    data_from: Optional[datetime] = Field(None, description="Start date of the data range")
+    data_to: Optional[datetime] = Field(None, description="End date of the data range")
 
 # Properties shared by models stored in DB
 class ChannelDataInDBBase(ChannelDataBase):
