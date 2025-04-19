@@ -18,7 +18,7 @@ class WellController:
         return db_well
 
     @staticmethod
-    def create_well(db: Session, well: WellCreate) -> Well:
+    def create_well(db: Session, well: WellCreate) -> Well: 
         db_well = WellRepository.get_well_by_name(db, name=well.name)
         if db_well:
             raise HTTPException(status_code=400, detail=f"Well with name {well.name} already exists")

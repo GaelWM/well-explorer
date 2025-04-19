@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session # type: ignore
 
 from app.models.well import Well
 from app.schemas.well_schema import WellCreate, WellUpdate
+from sqlalchemy import func # type: ignore
 
 class WellRepository:
     @staticmethod
@@ -61,4 +62,4 @@ class WellRepository:
         
     @staticmethod
     def get_wells_by_region(db: Session, region: str) -> List[Well]:
-        return db.query(Well).filter(Well.region == region).all()
+        return db.query(Well).filter(func.lower(Well.region) == region.lower()).all()
