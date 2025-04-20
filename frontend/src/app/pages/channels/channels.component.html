@@ -1,7 +1,7 @@
 <!-- channels.component.html -->
 <div class="container mx-auto p-4">
   <div class="flex justify-between items-center mb-6">
-    <h1 class="text-2xl font-bold">Channel Monitor for Well XXX</h1>
+    <h1 class="text-2xl">Channel Monitor for Well <span class="font-bold">{{ $well()?.name }}</span></h1>
     <button
       class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
       (click)="openChannelForm()"

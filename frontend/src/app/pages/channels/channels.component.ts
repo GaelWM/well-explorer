@@ -8,12 +8,15 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import * as echarts from 'echarts';
 import { map, of, switchMap } from 'rxjs';
 import { ConfirmDialogService } from '../../shared/components/confirm-dialog/confirm-dialog.service';
+import { Well } from '../wells/well.model';
+import { WellsService } from '../wells/wells.service';
 import { ChannelFormComponent } from './channel-form/channel-form.component';
 import { Channel, ChannelData } from './channel.model';
 import { ChannelsService } from './channels.service';
@@ -30,10 +33,23 @@ export class ChannelsComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly route = inject(ActivatedRoute);
   readonly dialog = inject(MatDialog);
   readonly confirmDialogService = inject(ConfirmDialogService);
+  readonly wellService = inject(WellsService);
 
   channels: Channel[] = [];
   selectedChannel: Channel | null = null;
   channelData: ChannelData[] = [];
+
+  #well$ = this.route.params.pipe(
+    map((params) => params['well_id']),
+    switchMap((well_id) => {
+      if (!well_id) {
+        console.error('Well ID is required to load channels.');
+        return of(null);
+      }
+      return this.wellService.getWellById(well_id);
+    })
+  );
+  $well = toSignal(this.#well$, { initialValue: {} as Well });
 
   // Chart related
   @ViewChild('chartContainer') chartContainer!: ElementRef;
@@ -244,9 +260,8 @@ export class ChannelsComponent implements OnInit, AfterViewInit, OnDestroy {
         },
       })
       .afterClosed()
-      .subscribe((result) => {
-        if (result) {
-        }
+      .subscribe(() => {
+        this.loadChannels();
       });
   }
 
@@ -266,8 +281,7 @@ export class ChannelsComponent implements OnInit, AfterViewInit, OnDestroy {
       })
       .afterClosed()
       .subscribe((result) => {
-        if (result) {
-        }
+        this.loadChannels();
       });
   }
 
@@ -326,7 +340,6 @@ export class ChannelsComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  // Delete channel methods
   confirmDeleteChannel(event: Event, channel: Channel): void {
     event.preventDefault();
     event.stopPropagation();
@@ -384,6 +397,7 @@ export class ChannelsComponent implements OnInit, AfterViewInit, OnDestroy {
               next: (channelData) => {
                 if (channelData) {
                   this.loadChannelData(channelData.id);
+                  this.selectChannel(channelData);
                 }
               },
               error: (error) => {
