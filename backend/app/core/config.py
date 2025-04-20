@@ -8,8 +8,8 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(enable_decoding=False, case_sensitive=True)
 
     # General
-    PROJECT_NAME: str = "FastAPI-Angular App"
-    PROJECT_DESCRIPTION: str = "A full-stack application with FastAPI and Angular"
+    PROJECT_NAME: str = "Well Explorer Backend API"
+    PROJECT_DESCRIPTION: str = "A FastAPI backend for the Well Explorer application"
     PROJECT_VERSION: str = "0.1.0"
     API_PREFIX: str = "/api"
     
@@ -18,7 +18,7 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 8  # 8 days
     
     # CORS
-    CORS_ORIGINS: List[str] = ['http://localhost:4200']
+    CORS_ORIGINS: List[str] = ['http://localhost:4200', 'http://localhost:4300']
 
     @field_validator("CORS_ORIGINS", mode="before")
     @classmethod
