@@ -31,3 +31,9 @@ docker compose up --build
 ```
 
 4. Open your browser and navigate to `http://localhost:4200/`
+
+## Images of the application
+
+![image](/images/well-list.png)
+![image](/images/map.png)
+![image](/images/well-detail.png)
