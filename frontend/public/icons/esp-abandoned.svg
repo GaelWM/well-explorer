@@ -1,0 +1,15 @@
+
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+  <!-- Light gray circle background -->
+  <circle cx="12" cy="12" r="10" fill="#FF0000" />
+  
+  <!-- Crossed out effect - diagonal lines -->
+  
+  
+  <!-- Light gray "ESP" text -->
+  <text x="12" y="14.5" font-family="Arial, sans-serif" font-size="6" font-weight="bold" text-anchor="middle" fill="#FFFFFF">ESP</text>
+  
+  <!-- Light gray border -->
+  <circle cx="12" cy="12" r="10" fill="none" stroke="#CC0000" stroke-width="1.5" />
+</svg>

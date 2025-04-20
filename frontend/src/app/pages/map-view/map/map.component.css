@@ -1,0 +1,47 @@
+:host {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.wells-map-container {
+  position: relative;
+}
+
+.marker-pin {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.8);
+}
+
+.marker-text {
+  color: white;
+  font-weight: bold;
+  font-size: 12px;
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+}
+
+:global(.leaflet-popup-content-wrapper) {
+  border-radius: 6px;
+}
+
+:global(.well-popup) {
+  h3 {
+    color: #334155;
+    margin-bottom: 4px;
+  }
+
+  .grid {
+    font-size: 0.875rem;
+  }
+}
+
+.map-legend {
+  min-width: 180px;
+  max-width: 240px;
+  font-size: 12px;
+}

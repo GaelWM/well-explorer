@@ -1,4 +1,3 @@
-// channels.component.ts
 import { CommonModule } from '@angular/common';
 import {
   AfterViewInit,
@@ -10,9 +9,11 @@ import {
   ViewChild,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import * as echarts from 'echarts';
 import { map, of, switchMap } from 'rxjs';
+import { ConfirmDialogService } from '../../shared/components/confirm-dialog/confirm-dialog.service';
 import { ChannelFormComponent } from './channel-form/channel-form.component';
 import { Channel, ChannelData } from './channel.model';
 import { ChannelsService } from './channels.service';
@@ -21,13 +22,14 @@ import { ChannelsService } from './channels.service';
   selector: 'app-channels',
   templateUrl: './channels.component.html',
   standalone: true,
-  imports: [CommonModule, RouterModule, ChannelFormComponent],
+  imports: [CommonModule, RouterModule, MatTooltipModule],
   styleUrls: ['./channels.component.css'],
 })
 export class ChannelsComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly channelService = inject(ChannelsService);
   readonly route = inject(ActivatedRoute);
   readonly dialog = inject(MatDialog);
+  readonly confirmDialogService = inject(ConfirmDialogService);
 
   channels: Channel[] = [];
   selectedChannel: Channel | null = null;
@@ -70,13 +72,13 @@ export class ChannelsComponent implements OnInit, AfterViewInit, OnDestroy {
   loadChannels(): void {
     this.route.params
       .pipe(
-        map((params) => params['wellId']),
-        switchMap((wellId) => {
-          if (!wellId) {
+        map((params) => params['well_id']),
+        switchMap((well_id) => {
+          if (!well_id) {
             console.error('Well ID is required to load channels.');
             return of([]);
           }
-          return this.channelService.getChannels(wellId);
+          return this.channelService.getChannels(well_id);
         })
       )
       .subscribe({
@@ -102,13 +104,13 @@ export class ChannelsComponent implements OnInit, AfterViewInit, OnDestroy {
   loadChannelData(channelId: number): void {
     this.route.params
       .pipe(
-        map((params) => params['wellId']),
-        switchMap((wellId) => {
-          if (!wellId) {
+        map((params) => params['well_id']),
+        switchMap((well_id) => {
+          if (!well_id) {
             console.error('Well ID is required to load channel data.');
             return of([]);
           }
-          return this.channelService.getChannelData(wellId, channelId);
+          return this.channelService.getChannelData(well_id, channelId);
         })
       )
       .subscribe({
@@ -236,28 +238,35 @@ export class ChannelsComponent implements OnInit, AfterViewInit, OnDestroy {
       .open(ChannelFormComponent, {
         width: '600px',
         panelClass: 'transparent',
-        data: { channel: this.editingChannel },
+        data: {
+          channel: this.editingChannel,
+          well_id: this.route.snapshot.params['well_id'],
+        },
       })
       .afterClosed()
       .subscribe((result) => {
         if (result) {
-          this.saveChannel(result);
         }
       });
   }
 
-  editChannel(channel: Channel): void {
+  editChannel(event: Event, channel: Channel): void {
+    event.preventDefault();
+    event.stopPropagation();
+
     this.editingChannel = channel;
     this.dialog
       .open(ChannelFormComponent, {
         width: '600px',
         panelClass: 'transparent',
-        data: { channel: this.editingChannel },
+        data: {
+          channel: this.editingChannel,
+          well_id: this.route.snapshot.params['well_id'],
+        },
       })
       .afterClosed()
       .subscribe((result) => {
         if (result) {
-          this.saveChannel(result);
         }
       });
   }
@@ -268,14 +277,14 @@ export class ChannelsComponent implements OnInit, AfterViewInit, OnDestroy {
 
       this.route.params
         .pipe(
-          map((params) => params['wellId']),
-          switchMap((wellId) => {
-            if (!wellId) {
+          map((params) => params['well_id']),
+          switchMap((well_id) => {
+            if (!well_id) {
               console.error('Well ID is required to update channel.');
               return of(null);
             }
             return this.channelService.getChannelById(
-              wellId,
+              well_id,
               this.editingChannel!.id
             );
           })
@@ -292,13 +301,13 @@ export class ChannelsComponent implements OnInit, AfterViewInit, OnDestroy {
       // Create new channel
       this.route.params
         .pipe(
-          map((params) => params['wellId']),
-          switchMap((wellId) => {
-            if (!wellId) {
+          map((params) => params['well_id']),
+          switchMap((well_id) => {
+            if (!well_id) {
               console.error('Well ID is required to create channel.');
               return of(null);
             }
-            return this.channelService.createChannel(wellId, channel);
+            return this.channelService.createChannel(well_id, channel);
           })
         )
         .subscribe({
@@ -318,26 +327,85 @@ export class ChannelsComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   // Delete channel methods
-  confirmDeleteChannel(channel: Channel): void {
-    this.channelToDelete = channel;
+  confirmDeleteChannel(event: Event, channel: Channel): void {
+    event.preventDefault();
+    event.stopPropagation();
+
+    this.confirmDialogService
+      .openConfirmDialog({
+        title: 'Delete Confirmation',
+        message:
+          'Are you sure you want to delete this channel? This action cannot be undone.',
+      })
+      .subscribe((result) => {
+        if (result) {
+          this.channelService
+            .deleteChannel(channel.well_id, channel.id)
+            .subscribe({
+              next: (success) => {},
+              error: (error) => {
+                console.error('Error deleting well:', error);
+              },
+            });
+        }
+      });
   }
 
-  cancelDelete(): void {
-    this.channelToDelete = null;
+  generateChannelData(event: Event, channel: Channel): void {
+    event.preventDefault();
+    event.stopPropagation();
+
+    this.confirmDialogService
+      .openConfirmDialog({
+        title: 'Data Generation Confirmation',
+        message:
+          'Are you sure you want to generate data for this channel? This action will overwrite existing data.',
+      })
+      .subscribe((result) => {
+        if (result) {
+          this.route.params
+            .pipe(
+              map((params) => params['well_id']),
+              switchMap((well_id) => {
+                if (!well_id) {
+                  console.error(
+                    'Well ID is required to generate channel data.'
+                  );
+                  return of(null);
+                }
+                return this.channelService.generateChannelData(
+                  well_id,
+                  channel.id,
+                  channel
+                );
+              })
+            )
+            .subscribe({
+              next: (channelData) => {
+                if (channelData) {
+                  this.loadChannelData(channelData.id);
+                }
+              },
+              error: (error) => {
+                console.error('Error generating channel data:', error);
+              },
+            });
+        }
+      });
   }
 
   deleteChannel(): void {
     if (this.channelToDelete) {
       this.route.params
         .pipe(
-          map((params) => params['wellId']),
-          switchMap((wellId) => {
-            if (!wellId) {
+          map((params) => params['well_id']),
+          switchMap((well_id) => {
+            if (!well_id) {
               console.error('Well ID is required to delete channel.');
               return of(null);
             }
             return this.channelService.getChannelById(
-              wellId,
+              well_id,
               this.channelToDelete!.id
             );
           })

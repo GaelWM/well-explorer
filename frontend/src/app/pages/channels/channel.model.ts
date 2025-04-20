@@ -1,20 +1,20 @@
 export class Channel {
   id: number;
-  wellId: number;
+  well_id: number;
   name: string;
-  dateFrom: Date | null = null;
-  dateTo: Date | null = null;
-  createdAt?: Date;
-  updatedAt?: Date;
+  date_from: Date | null = null;
+  date_to: Date | null = null;
+  created_at?: Date;
+  updated_at?: Date;
 
   constructor(model: Partial<Channel>) {
     this.id = model.id || 0;
-    this.wellId = model.wellId!;
+    this.well_id = model.well_id!;
     this.name = model.name || '';
-    this.dateFrom = model.dateFrom || null;
-    this.dateTo = model.dateTo || null;
-    this.createdAt = model.createdAt;
-    this.updatedAt = model.updatedAt;
+    this.date_from = model.date_from || null;
+    this.date_to = model.date_to || null;
+    this.created_at = model.created_at;
+    this.updated_at = model.updated_at;
   }
 }
 

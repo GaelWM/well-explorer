@@ -31,13 +31,13 @@
       <!-- Date From -->
       <div class="form-group">
         <label
-          for="dateFrom"
+          for="date_from"
           class="block text-sm font-medium text-gray-700 mb-1"
         >Date From</label>
         <input
           type="date"
-          id="dateFrom"
-          formControlName="dateFrom"
+          id="date_from"
+          formControlName="date_from"
           class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
       </div>
@@ -45,20 +45,20 @@
       <!-- Date To -->
       <div class="form-group">
         <label
-          for="dateTo"
+          for="date_to"
           class="block text-sm font-medium text-gray-700 mb-1"
         >Date To</label>
         <input
           type="date"
-          id="dateTo"
-          formControlName="dateTo"
+          id="date_to"
+          formControlName="date_to"
           class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
         <div
-          *ngIf="f['dateTo'].touched && f['dateTo'].invalid"
+          *ngIf="f['date_to'].touched && f['date_to'].invalid"
           class="text-red-500 text-sm mt-1"
         >
-          <div *ngIf="f['dateTo'].errors?.['dateOrder']">End date must be after start date.</div>
+          <div *ngIf="f['date_to'].errors?.['dateOrder']">End date must be after start date.</div>
         </div>
       </div>
     </div>

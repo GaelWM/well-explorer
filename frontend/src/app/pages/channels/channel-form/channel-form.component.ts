@@ -1,12 +1,11 @@
-// channel-form.component.ts
+import { DIALOG_DATA } from '@angular/cdk/dialog';
 import { CommonModule } from '@angular/common';
 import {
+  ChangeDetectionStrategy,
   Component,
-  EventEmitter,
   inject,
   Input,
   OnInit,
-  Output,
 } from '@angular/core';
 import {
   AbstractControl,
@@ -18,20 +17,25 @@ import {
 } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Channel } from '../channel.model';
+import { ChannelsService } from '../channels.service';
 
 @Component({
   selector: 'app-channel-form',
   templateUrl: './channel-form.component.html',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
-  styleUrls: ['./channel-form.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ChannelFormComponent implements OnInit {
   readonly dialogRef = inject(MatDialogRef);
+  readonly channelService = inject(ChannelsService);
+
+  readonly data = inject(DIALOG_DATA) as {
+    channel: Channel | null;
+    well_id: number;
+  };
 
   @Input() channel: Channel | null = null;
-  @Output() saveChannel = new EventEmitter<Partial<Channel>>();
-  @Output() cancel = new EventEmitter<void>();
 
   channelForm!: FormGroup;
   formError: string | null = null;
@@ -46,9 +50,11 @@ export class ChannelFormComponent implements OnInit {
   initForm(): void {
     this.channelForm = this.fb.group(
       {
+        id: [this.channel?.id || null],
+        well_id: [this.data.well_id || this.channel?.well_id],
         name: [this.channel?.name || '', [Validators.required]],
-        dateFrom: [this.formatDateForInput(this.channel?.dateFrom || null)],
-        dateTo: [this.formatDateForInput(this.channel?.dateTo || null)],
+        date_from: [this.formatDateForInput(this.channel?.date_from || null)],
+        date_to: [this.formatDateForInput(this.channel?.date_to || null)],
       },
       { validators: this.dateOrderValidator }
     );
@@ -57,25 +63,25 @@ export class ChannelFormComponent implements OnInit {
     if (this.channel) {
       this.channelForm.patchValue({
         name: this.channel.name,
-        dateFrom: this.formatDateForInput(this.channel.dateFrom),
-        dateTo: this.formatDateForInput(this.channel.dateTo),
+        date_from: this.formatDateForInput(this.channel.date_from),
+        date_to: this.formatDateForInput(this.channel.date_to),
       });
     }
   }
 
-  // Custom validator to ensure dateTo is after dateFrom
+  // Custom validator to ensure date_to is after date_from
   dateOrderValidator(control: AbstractControl): ValidationErrors | null {
-    const dateFrom = control.get('dateFrom')?.value;
-    const dateTo = control.get('dateTo')?.value;
+    const date_from = control.get('date_from')?.value;
+    const date_to = control.get('date_to')?.value;
 
-    if (dateFrom && dateTo && new Date(dateFrom) > new Date(dateTo)) {
-      control.get('dateTo')?.setErrors({ dateOrder: true });
+    if (date_from && date_to && new Date(date_from) > new Date(date_to)) {
+      control.get('date_to')?.setErrors({ dateOrder: true });
       return { dateOrder: true };
     }
 
     // Clear the error if it's been fixed
-    if (control.get('dateTo')?.hasError('dateOrder')) {
-      control.get('dateTo')?.setErrors(null);
+    if (control.get('date_to')?.hasError('dateOrder')) {
+      control.get('date_to')?.setErrors(null);
     }
 
     return null;
@@ -120,21 +126,45 @@ export class ChannelFormComponent implements OnInit {
     };
 
     // Convert string dates to Date objects
-    if (formValues.dateFrom) {
-      channelData.dateFrom = new Date(formValues.dateFrom);
+    if (formValues.date_from) {
+      channelData.date_from = new Date(formValues.date_from);
     }
 
-    if (formValues.dateTo) {
-      channelData.dateTo = new Date(formValues.dateTo);
+    if (formValues.date_to) {
+      channelData.date_to = new Date(formValues.date_to);
     }
 
-    // Emit the channel data to parent component
-    this.saveChannel.emit(channelData);
+    channelData.well_id = this.data.well_id;
+
+    if (this.channel) {
+      this.channelService
+        .updateChannel(
+          this.data.well_id,
+          this.channel.id,
+          channelData as Channel
+        )
+        .subscribe((channelData) => {
+          if (channelData) {
+            this.dialogRef.close();
+          } else {
+            this.formError = 'Failed to save channel data.';
+          }
+        });
+    } else {
+      this.channelService
+        .createChannel(this.data.well_id, channelData as Channel)
+        .subscribe((channelData) => {
+          if (channelData) {
+            this.dialogRef.close();
+          } else {
+            this.formError = 'Failed to save channel data.';
+          }
+        });
+    }
   }
 
   // Cancel form
   onCancel(): void {
     this.dialogRef.close();
-    this.cancel.emit();
   }
 }

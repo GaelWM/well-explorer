@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+  <!-- Gray circle background -->
+  <circle cx="12" cy="12" r="10" fill="#FFA500" />
+  
+  <!-- Gray "GL" text -->
+  <text x="12" y="14.5" font-family="Arial, sans-serif" font-size="7" font-weight="bold" text-anchor="middle" fill="#FFFFFF">GL</text>
+  
+  <!-- Gray border -->
+  <circle cx="12" cy="12" r="10" fill="none" stroke="#CC8400" stroke-width="1.5" />
+</svg>

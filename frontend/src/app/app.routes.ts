@@ -20,6 +20,8 @@ export const routes: Routes = [
   {
     path: 'map',
     loadComponent: () =>
-      import('./pages/map/map.component').then((c) => c.MapComponent),
+      import('./pages/map-view/map-view.component').then(
+        (c) => c.MapViewComponent
+      ),
   },
 ];

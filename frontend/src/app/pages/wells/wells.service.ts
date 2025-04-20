@@ -5,7 +5,6 @@ import { environment } from '../../../environments/environment';
 import { Well } from './well.model';
 
 const baseUrl = environment.apiUrl;
-console.log('baseUrl: ', baseUrl);
 
 @Injectable({
   providedIn: 'root',
@@ -14,24 +13,26 @@ export class WellsService {
   #http = inject(HttpClient);
 
   getWells(): Observable<Well[]> {
-    return this.#http.get<Well[]>('/api/wells');
+    return this.#http
+      .get<Well[]>(`${baseUrl}/wells`)
+      .pipe(map((wells) => wells.map((w) => new Well(w))));
   }
 
   getWellById(id: number): Observable<Well | undefined> {
     return this.#http
-      .get<Well>(`${baseUrl}/api/wells/${id}`)
-      .pipe(map((well) => well || undefined));
+      .get<Well>(`${baseUrl}/wells/${id}`)
+      .pipe(map((well) => new Well(well) || undefined));
   }
 
   createWell(well: Partial<Well>): Observable<Well> {
-    return this.#http.post<Well>(`${baseUrl}/api/wells`, well);
+    return this.#http.post<Well>(`${baseUrl}/wells`, well);
   }
 
   updateWell(id: number, well: Partial<Well>): Observable<Well> {
-    return this.#http.put<Well>(`${baseUrl}/api/wells/${id}`, well);
+    return this.#http.put<Well>(`${baseUrl}/wells/${id}`, well);
   }
 
   deleteWell(id: number): Observable<void> {
-    return this.#http.delete<void>(`${baseUrl}/api/wells/${id}`);
+    return this.#http.delete<void>(`${baseUrl}/wells/${id}`);
   }
 }

@@ -45,18 +45,12 @@ export class WellFormComponent implements OnInit {
   initForm(): void {
     this.wellForm = this.fb.group({
       name: [this.data.well?.name, [Validators.required]],
-      liftType: [this.data.well?.liftType, [Validators.required]],
+      liftType: [this.data.well?.lift_type, [Validators.required]],
       region: [this.data.well?.region, [Validators.required]],
-      latitude: [
-        this.data.well?.latitude,
-        [Validators.required, Validators.min(-90), Validators.max(90)],
-      ],
-      longitude: [
-        this.data.well?.longitude,
-        [Validators.required, Validators.min(-180), Validators.max(180)],
-      ],
+      latitude: [this.data.well?.latitude, [Validators.required]],
+      longitude: [this.data.well?.longitude, [Validators.required]],
       installationDate: [
-        this.data.well?.installationDate,
+        this.data.well?.installation_date,
         [this.maxDateValidator],
       ],
       depth: [
@@ -97,15 +91,15 @@ export class WellFormComponent implements OnInit {
 
           // Format the installation date to YYYY-MM-DD for the date input
           let installationDateStr: string | null = null;
-          if (well.installationDate) {
-            const date = new Date(well.installationDate);
+          if (well.installation_date) {
+            const date = new Date(well.installation_date);
             installationDateStr = date.toISOString().split('T')[0];
           }
 
           // Patch form values
           this.wellForm.patchValue({
             name: well.name,
-            liftType: well.liftType,
+            liftType: well.lift_type,
             region: well.region,
             latitude: well.latitude,
             longitude: well.longitude,
@@ -141,7 +135,7 @@ export class WellFormComponent implements OnInit {
     const formValues = this.wellForm.value;
     const wellData: Partial<Well> = {
       name: formValues.name,
-      liftType: formValues.liftType,
+      lift_type: formValues.liftType,
       region: formValues.region,
       latitude: formValues.latitude,
       longitude: formValues.longitude,
@@ -151,7 +145,8 @@ export class WellFormComponent implements OnInit {
 
     // Add installation date if provided
     if (formValues.installationDate) {
-      wellData.installationDate = new Date(formValues.installationDate);
+      const date = new Date(formValues.installationDate);
+      wellData.installation_date = date.toISOString().split('T')[0];
     }
 
     // Add ID if in edit mode
@@ -171,7 +166,7 @@ export class WellFormComponent implements OnInit {
   createWell(wellData: Partial<Well>): void {
     this.wellService.createWell(wellData).subscribe({
       next: () => {
-        this.router.navigate(['/wells']);
+        this.dialogRef.close();
         // In a real app, you would also show a success notification
       },
       error: (error) => {
@@ -185,7 +180,7 @@ export class WellFormComponent implements OnInit {
   updateWell(wellData: Partial<Well>): void {
     this.wellService.updateWell(wellData.id!, wellData).subscribe({
       next: () => {
-        this.router.navigate(['/wells']);
+        this.dialogRef.close();
         // In a real app, you would also show a success notification
       },
       error: (error) => {

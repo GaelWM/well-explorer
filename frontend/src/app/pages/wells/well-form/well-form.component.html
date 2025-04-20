@@ -176,6 +176,8 @@
           </div>
         </div>
 
+
+
         <!-- Installation Date -->
         <div class="form-group">
           <label
@@ -195,22 +197,6 @@
             <div *ngIf="f['installationDate'].errors?.['maxDate']">Installation date cannot be in the future.</div>
           </div>
         </div>
-      </div>
-
-      <!-- Location Map Preview (Placeholder) -->
-      <div class="mt-6 border border-gray-200 rounded-lg p-4 h-64 bg-gray-50 flex items-center justify-center">
-        <p
-          class="text-gray-600"
-          *ngIf="f['latitude'].valid && f['longitude'].valid"
-        >
-          Map preview showing location at {{ f['latitude'].value }}, {{ f['longitude'].value }}
-        </p>
-        <p
-          class="text-gray-600"
-          *ngIf="!f['latitude'].valid || !f['longitude'].valid"
-        >
-          Enter valid latitude and longitude to see location preview
-        </p>
       </div>
 
       <!-- Form Actions -->

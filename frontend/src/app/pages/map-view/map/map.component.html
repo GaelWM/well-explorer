@@ -1,0 +1,50 @@
+<!-- wells-map.component.html -->
+<div class="wells-map-container h-full w-full">
+  <div
+    id="wells-map"
+    class="h-full w-full"
+  ></div>
+
+  <!-- Map Legend -->
+  <div class="map-legend bg-white bg-opacity-90 shadow-md rounded-md p-3 absolute bottom-4 right-4 z-[1000] text-sm">
+    <h3 class="font-bold mb-2">Legend</h3>
+
+    <!-- Well Type Legend -->
+    <div class="mb-2">
+      <h4 class="font-semibold">Lift Type:</h4>
+      <div class="grid grid-cols-1 gap-1">
+        <div class="flex items-center">
+          <span class="inline-block w-4 h-4 rounded-full bg-blue-500 mr-2"></span>
+          <span>Natural Flow (NF)</span>
+        </div>
+        <div class="flex items-center">
+          <span class="inline-block w-4 h-4 rounded-full bg-purple-500 mr-2"></span>
+          <span>Gas Lift (GL)</span>
+        </div>
+        <div class="flex items-center">
+          <span class="inline-block w-4 h-4 rounded-full bg-yellow-500 mr-2"></span>
+          <span>Electrical Submersible Pump (ESP)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Well Status Legend -->
+    <div>
+      <h4 class="font-semibold">Status:</h4>
+      <div class="grid grid-cols-1 gap-1">
+        <div class="flex items-center">
+          <span class="inline-block w-4 h-4 rounded-full bg-green-500 mr-2"></span>
+          <span>Active</span>
+        </div>
+        <div class="flex items-center">
+          <span class="inline-block w-4 h-4 rounded-full bg-amber-500 mr-2"></span>
+          <span>Inactive</span>
+        </div>
+        <div class="flex items-center">
+          <span class="inline-block w-4 h-4 rounded-full bg-red-500 mr-2"></span>
+          <span>Abandoned</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

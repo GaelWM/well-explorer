@@ -7,8 +7,17 @@ export default [
     component: WellsComponent,
   },
   {
-    path: ':wellId',
+    path: ':well_id',
     loadComponent: () =>
       import('../channels/channels.component').then((m) => m.ChannelsComponent),
+    children: [
+      {
+        path: 'channels',
+        loadComponent: () =>
+          import('../channels/channels.component').then(
+            (m) => m.ChannelsComponent
+          ),
+      },
+    ],
   },
 ] as Routes;

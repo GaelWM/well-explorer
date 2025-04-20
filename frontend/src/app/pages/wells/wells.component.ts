@@ -1,24 +1,53 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import {
+  Component,
+  computed,
+  DestroyRef,
+  effect,
+  inject,
+  signal,
+} from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { RouterLink } from '@angular/router';
+import { ConfirmDialogService } from '../../shared/components/confirm-dialog/confirm-dialog.service';
 import { WellFormComponent } from './well-form/well-form.component';
-import { Well, wellStatusOptions } from './well.model';
+import { LiftType, Well, WellStatus, wellStatusOptions } from './well.model';
 import { WellsService } from './wells.service';
 
 @Component({
   selector: 'app-wells',
   templateUrl: './wells.component.html',
-  imports: [CommonModule, FormsModule, MatDialogModule],
+  imports: [CommonModule, FormsModule, MatDialogModule, RouterLink],
 })
-export class WellsComponent implements OnInit {
+export class WellsComponent {
   readonly wellService = inject(WellsService);
   readonly dialog = inject(MatDialog);
+  readonly destroyRef = inject(DestroyRef);
+  readonly confirmDialogService = inject(ConfirmDialogService);
 
-  wells: Well[] = [];
-  filteredWells: Well[] = [];
-  statusOptions = wellStatusOptions;
-  regionOptions: string[] = [];
+  #wells$ = this.wellService
+    .getWells()
+    .pipe(takeUntilDestroyed(this.destroyRef));
+  $wells = toSignal(this.#wells$, { initialValue: [] });
+
+  $filteredWells = signal<Well[]>([]);
+
+  $regionOptions = computed(() => {
+    const uniqueRegions = new Set<string>();
+    this.$wells().forEach((well) => {
+      if (well.region) {
+        uniqueRegions.add(well.region);
+      }
+    });
+    return Array.from(uniqueRegions).sort();
+  });
+
+  $statusOptions = signal(wellStatusOptions);
+
+  WellStatus = WellStatus;
+  LiftType = LiftType;
 
   // Filters
   statusFilter: string = '';
@@ -29,119 +58,106 @@ export class WellsComponent implements OnInit {
 
   wellToDelete: Well | null = null;
 
-  ngOnInit(): void {
-    this.loadWells();
+  constructor() {
+    effect(() => {
+      this.$filteredWells.set(this.$wells());
+    });
   }
 
   openWellForm(): void {
     const dialogRef = this.dialog.open(WellFormComponent, {
       width: '600px',
       panelClass: 'transparent',
-      data: { well: this.selectedWell },
+      data: { well: null },
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        this.loadWells();
-      }
+    dialogRef.afterClosed().subscribe(() => {
+      // Refresh the well list after closing the dialog
+      this.#wells$.subscribe((wells) => {
+        this.$filteredWells.set(wells);
+      });
     });
-  }
-
-  loadWells(): void {
-    this.wellService.getWells().subscribe({
-      next: (wells) => {
-        console.log('wells: ', wells);
-        this.wells = wells;
-        this.filteredWells = [...wells];
-        this.extractRegions();
-      },
-      error: (error) => {
-        console.error('Error loading wells:', error);
-        // In a real app, you would add proper error handling here
-      },
-    });
-  }
-
-  extractRegions(): void {
-    // Extract unique regions from wells
-    const uniqueRegions = new Set<string>();
-    this.wells.forEach((well) => {
-      if (well.region) {
-        uniqueRegions.add(well.region);
-      }
-    });
-    this.regionOptions = Array.from(uniqueRegions).sort();
   }
 
   applyFilters(): void {
-    this.filteredWells = this.wells.filter((well) => {
-      // Status filter
-      if (this.statusFilter && well.status !== this.statusFilter) {
-        return false;
+    this.$filteredWells.update((wells) => {
+      // Reset filtered wells to all wells
+      wells = [...this.$wells()];
+
+      // Apply status filter
+      if (this.statusFilter) {
+        wells = wells.filter((well) => well.status === this.statusFilter);
       }
 
-      // Region filter
-      if (this.regionFilter && well.region !== this.regionFilter) {
-        return false;
+      // Apply region filter
+      if (this.regionFilter) {
+        wells = wells.filter((well) => well.region === this.regionFilter);
       }
 
-      return true;
+      return wells;
     });
   }
 
   resetFilters(): void {
     this.statusFilter = '';
     this.regionFilter = '';
-    this.filteredWells = [...this.wells];
+    this.$filteredWells.set(this.$wells());
   }
 
-  viewWellDetails(well: Well): void {
+  editWell(event: Event, well: Well): void {
+    event.preventDefault();
+    event.stopPropagation();
+
+    this.selectedWell = well;
+    const dialogRef = this.dialog.open(WellFormComponent, {
+      width: '600px',
+      panelClass: 'transparent',
+      data: { well: this.selectedWell },
+    });
+    dialogRef.afterClosed().subscribe(() => {
+      // Refresh the well list after closing the dialog
+      this.#wells$.subscribe((wells) => {
+        this.$filteredWells.set(wells);
+      });
+    });
+  }
+
+  viewWellDetails(event: Event, well: Well): void {
+    event.preventDefault();
+    event.stopPropagation();
+
     this.selectedWell = well;
   }
 
-  closeWellDetails(): void {
-    this.selectedWell = null;
-  }
+  deleteWell(event: Event, well: Well): void {
+    event.preventDefault();
+    event.stopPropagation();
 
-  confirmDeleteWell(well: Well): void {
-    this.wellToDelete = well;
-  }
-
-  cancelDelete(): void {
-    this.wellToDelete = null;
-  }
-
-  deleteWell(): void {
-    if (this.wellToDelete) {
-      this.wellService.deleteWell(this.wellToDelete.id).subscribe({
-        next: (success) => {
-          if (success !== null) {
-            // Remove well from arrays and refresh the view
-            this.wells = this.wells.filter(
-              (w) => w.id !== this.wellToDelete!.id
-            );
-            this.filteredWells = this.filteredWells.filter(
-              (w) => w.id !== this.wellToDelete!.id
-            );
-
-            // In a real app, you would show a success notification
-            console.log(`Well ${this.wellToDelete!.name} successfully deleted`);
-          } else {
-            // In a real app, you would show an error notification
-            console.error(`Failed to delete well ${this.wellToDelete!.name}`);
-          }
-
-          // Close the confirmation dialog
-          this.wellToDelete = null;
-        },
-        error: (error) => {
-          console.error('Error deleting well:', error);
-          // In a real app, you would show an error notification
-
-          // Close the confirmation dialog
-          this.wellToDelete = null;
-        },
+    this.confirmDialogService
+      .openConfirmDialog({
+        title: 'Delete Confirmation',
+        message:
+          'Are you sure you want to delete this well? This action cannot be undone.',
+      })
+      .subscribe((result) => {
+        if (result) {
+          this.wellService.deleteWell(well.id).subscribe({
+            next: (success) => {
+              if (success !== null) {
+                this.$filteredWells.update((wells) =>
+                  wells.filter((w) => w.id !== well!.id)
+                );
+              } else {
+                console.error(
+                  `Failed to delete well ${this.wellToDelete!.name}`
+                );
+              }
+            },
+            error: (error) => {
+              console.error('Error deleting well:', error);
+            },
+          });
+        }
       });
-    }
   }
 }

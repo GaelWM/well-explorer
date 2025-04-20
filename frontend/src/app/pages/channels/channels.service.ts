@@ -12,46 +12,62 @@ const baseUrl = environment.apiUrl;
 export class ChannelsService {
   #http = inject(HttpClient);
 
-  getChannels(wellId: number): Observable<Channel[]> {
-    return this.#http.get<Channel[]>(`/api/wells/${wellId}/channels`);
+  getChannels(well_id: number): Observable<Channel[]> {
+    return this.#http.get<Channel[]>(`${baseUrl}/wells/${well_id}/channels`);
   }
 
-  getChannelById(wellId: number, id: number): Observable<Channel | undefined> {
+  getChannelById(well_id: number, id: number): Observable<Channel | undefined> {
     return this.#http
-      .get<Channel>(`${baseUrl}/api/wells/${wellId}/channels/${id}`)
+      .get<Channel>(`${baseUrl}/wells/${well_id}/channels/${id}`)
       .pipe(map((channel) => channel || undefined));
   }
 
-  getChannelData(wellId: number, id: number): Observable<ChannelData[]> {
+  getChannelData(well_id: number, id: number): Observable<ChannelData[]> {
     return this.#http.get<ChannelData[]>(
-      `${baseUrl}/api/wells/${wellId}/channels/${id}/data`
+      `${baseUrl}/wells/${well_id}/channels/${id}/data`
     );
   }
 
   createChannel(
-    wellId: number,
+    well_id: number,
     channel: Partial<Channel>
   ): Observable<Channel> {
     return this.#http.post<Channel>(
-      `${baseUrl}/api/wells/${wellId}/channels`,
+      `${baseUrl}/wells/${well_id}/channels`,
       channel
     );
   }
 
   updateChannel(
-    wellId: number,
+    well_id: number,
     id: number,
     channel: Partial<Channel>
   ): Observable<Channel> {
     return this.#http.put<Channel>(
-      `${baseUrl}/api/wells/${wellId}/channels/${id}`,
+      `${baseUrl}/wells/${well_id}/channels/${id}`,
       channel
     );
   }
 
-  deleteChannel(wellId: number, id: number): Observable<void> {
+  deleteChannel(well_id: number, id: number): Observable<void> {
     return this.#http.delete<void>(
-      `${baseUrl}/api/wells/${wellId}/channels/${id}`
+      `${baseUrl}/wells/${well_id}/channels/${id}`
+    );
+  }
+
+  generateChannelData(
+    well_id: number,
+    id: number,
+    channel: Partial<Channel>
+  ): Observable<Channel> {
+    return this.#http.post<Channel>(
+      `${baseUrl}/wells/${well_id}/channels/${id}/generator/populate`,
+      {
+        well_id: well_id,
+        channel_id: id,
+        date_from: channel.date_from,
+        date_to: channel.date_to,
+      }
     );
   }
 }
