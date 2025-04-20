@@ -1,0 +1,235 @@
+<!-- well-form.component.html -->
+<div class="container mx-auto p-4">
+  <div class="bg-white rounded-lg shadow-lg p-6">
+    <h1 class="text-2xl font-bold mb-6">{{ isEditMode ? 'Edit Well: ' + well.name : 'Add New Well' }}</h1>
+
+    <form
+      [formGroup]="wellForm"
+      (ngSubmit)="onSubmit()"
+    >
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Well Name -->
+        <div class="form-group">
+          <label
+            for="name"
+            class="block text-sm font-medium text-gray-700 mb-1"
+          >Well Name*</label>
+          <input
+            type="text"
+            id="name"
+            formControlName="name"
+            class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Enter well name"
+          >
+          <div
+            *ngIf="f['name'].touched && f['name'].invalid"
+            class="text-red-500 text-sm mt-1"
+          >
+            <div *ngIf="f['name'].errors?.['required']">Well name is required.</div>
+          </div>
+        </div>
+
+        <!-- Lift Type -->
+        <div class="form-group">
+          <label
+            for="liftType"
+            class="block text-sm font-medium text-gray-700 mb-1"
+          >Lift Type*</label>
+          <select
+            id="liftType"
+            formControlName="liftType"
+            class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option
+              [ngValue]="null"
+              disabled
+            >Select Lift Type</option>
+            <option
+              *ngFor="let option of liftTypeOptions"
+              [value]="option.value"
+            >{{ option.label }}</option>
+          </select>
+          <div
+            *ngIf="f['liftType'].touched && f['liftType'].invalid"
+            class="text-red-500 text-sm mt-1"
+          >
+            <div *ngIf="f['liftType'].errors?.['required']">Lift type is required.</div>
+          </div>
+        </div>
+
+        <!-- Region -->
+        <div class="form-group">
+          <label
+            for="region"
+            class="block text-sm font-medium text-gray-700 mb-1"
+          >Region*</label>
+          <input
+            type="text"
+            id="region"
+            formControlName="region"
+            class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Enter region"
+          >
+          <div
+            *ngIf="f['region'].touched && f['region'].invalid"
+            class="text-red-500 text-sm mt-1"
+          >
+            <div *ngIf="f['region'].errors?.['required']">Region is required.</div>
+          </div>
+        </div>
+
+        <!-- Status -->
+        <div class="form-group">
+          <label
+            for="status"
+            class="block text-sm font-medium text-gray-700 mb-1"
+          >Status*</label>
+          <select
+            id="status"
+            formControlName="status"
+            class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option
+              [ngValue]="null"
+              disabled
+            >Select Status</option>
+            <option
+              *ngFor="let option of statusOptions"
+              [value]="option.value"
+            >{{ option.label }}</option>
+          </select>
+          <div
+            *ngIf="f['status'].touched && f['status'].invalid"
+            class="text-red-500 text-sm mt-1"
+          >
+            <div *ngIf="f['status'].errors?.['required']">Status is required.</div>
+          </div>
+        </div>
+
+        <!-- Latitude -->
+        <div class="form-group">
+          <label
+            for="latitude"
+            class="block text-sm font-medium text-gray-700 mb-1"
+          >Latitude*</label>
+          <input
+            type="number"
+            id="latitude"
+            formControlName="latitude"
+            class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Enter latitude"
+            step="0.000001"
+          >
+          <div
+            *ngIf="f['latitude'].touched && f['latitude'].invalid"
+            class="text-red-500 text-sm mt-1"
+          >
+            <div *ngIf="f['latitude'].errors?.['required']">Latitude is required.</div>
+            <div *ngIf="f['latitude'].errors?.['min'] || f['latitude'].errors?.['max']">Latitude must be between -90 and 90.</div>
+          </div>
+        </div>
+
+        <!-- Longitude -->
+        <div class="form-group">
+          <label
+            for="longitude"
+            class="block text-sm font-medium text-gray-700 mb-1"
+          >Longitude*</label>
+          <input
+            type="number"
+            id="longitude"
+            formControlName="longitude"
+            class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Enter longitude"
+            step="0.000001"
+          >
+          <div
+            *ngIf="f['longitude'].touched && f['longitude'].invalid"
+            class="text-red-500 text-sm mt-1"
+          >
+            <div *ngIf="f['longitude'].errors?.['required']">Longitude is required.</div>
+            <div *ngIf="f['longitude'].errors?.['min'] || f['longitude'].errors?.['max']">Longitude must be between -180 and 180.
+            </div>
+          </div>
+        </div>
+
+        <!-- Depth -->
+        <div class="form-group">
+          <label
+            for="depth"
+            class="block text-sm font-medium text-gray-700 mb-1"
+          >Depth (m)*</label>
+          <input
+            type="number"
+            id="depth"
+            formControlName="depth"
+            class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Enter depth in meters"
+            step="0.01"
+          >
+          <div
+            *ngIf="f['depth'].touched && f['depth'].invalid"
+            class="text-red-500 text-sm mt-1"
+          >
+            <div *ngIf="f['depth'].errors?.['required']">Depth is required.</div>
+            <div *ngIf="f['depth'].errors?.['min']">Depth must be greater than 0.</div>
+          </div>
+        </div>
+
+        <!-- Installation Date -->
+        <div class="form-group">
+          <label
+            for="installationDate"
+            class="block text-sm font-medium text-gray-700 mb-1"
+          >Installation Date</label>
+          <input
+            type="date"
+            id="installationDate"
+            formControlName="installationDate"
+            class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+          <div
+            *ngIf="f['installationDate'].touched && f['installationDate'].invalid"
+            class="text-red-500 text-sm mt-1"
+          >
+            <div *ngIf="f['installationDate'].errors?.['maxDate']">Installation date cannot be in the future.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Location Map Preview (Placeholder) -->
+      <div class="mt-6 border border-gray-200 rounded-lg p-4 h-64 bg-gray-50 flex items-center justify-center">
+        <p
+          class="text-gray-600"
+          *ngIf="f['latitude'].valid && f['longitude'].valid"
+        >
+          Map preview showing location at {{ f['latitude'].value }}, {{ f['longitude'].value }}
+        </p>
+        <p
+          class="text-gray-600"
+          *ngIf="!f['latitude'].valid || !f['longitude'].valid"
+        >
+          Enter valid latitude and longitude to see location preview
+        </p>
+      </div>
+
+      <!-- Form Actions -->
+      <div class="mt-6 flex justify-end space-x-3">
+        <button
+          type="button"
+          class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500"
+          (click)="onCancel()"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          [disabled]="wellForm.invalid"
+        >
+          {{ isEditMode ? 'Update Well' : 'Create Well' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

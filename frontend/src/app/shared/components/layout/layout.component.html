@@ -1,0 +1,74 @@
+<div class="flex h-screen bg-gray-100">
+  <!-- Sidebar -->
+  <div class="w-64 bg-indigo-600 text-white">
+    <!-- Logo area -->
+    <div class="p-4 flex items-center">
+      <span class="ml-2 text-xl font-semibold">Wells Explorer</span>
+    </div>
+
+    <!-- Main menu -->
+    <nav class="mt-8">
+      <a
+        [routerLink]="'/dashboard'"
+        routerLinkActive="bg-indigo-700"
+        class="block"
+      >
+        <div class="px-4 py-3  text-white">
+          <div class="flex items-center">
+            <span class="material-symbols-outlined mr-3">dashboard</span>
+            <span>Dashboard</span>
+          </div>
+        </div>
+      </a>
+
+      <a
+        [routerLink]="'/wells'"
+        routerLinkActive="bg-indigo-700"
+        class="block"
+      >
+        <div class="px-4 py-3 hover:bg-indigo-700 text-white transition">
+          <div class="flex items-center">
+            <span class="material-symbols-outlined mr-3">water_drop</span>
+            <span>Wells</span>
+          </div>
+        </div>
+      </a>
+
+      <a
+        [routerLink]="'/map'"
+        routerLinkActive="bg-indigo-700"
+        class="block"
+      >
+        <div class="px-4 py-3 hover:bg-indigo-700 text-white transition">
+          <div class="flex items-center">
+            <span class="material-symbols-outlined mr-3">map</span>
+            <span>Map</span>
+          </div>
+        </div>
+      </a>
+    </nav>
+  </div>
+
+  <!-- Main content -->
+  <div class="flex-1 flex flex-col overflow-hidden">
+    <!-- Top navigation -->
+    <div class="bg-white shadow flex items-center justify-end p-4">
+      <!-- Search bar -->
+      <div class="flex-1 flex items-center max-w-lg">
+        <div class="w-full flex items-center relative">
+          <span class="material-symbols-outlined absolute left-3 text-gray-400">search</span>
+          <input
+            type="text"
+            placeholder="Search"
+            class="pl-10 pr-4 py-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+          >
+        </div>
+      </div>
+    </div>
+
+    <!-- Main content area -->
+    <div class="flex-1 overflow-auto p-6">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</div>

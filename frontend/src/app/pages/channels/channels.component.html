@@ -1,0 +1,178 @@
+<!-- channels.component.html -->
+<div class="container mx-auto p-4">
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-2xl font-bold">Channel Monitor for Well XXX</h1>
+    <button
+      class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+      (click)="openChannelForm()"
+    >
+      Add New Channel
+    </button>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Channel List (Left Side) -->
+    <div class="lg:col-span-1">
+      <div class="bg-white rounded-lg shadow overflow-hidden">
+        <div class="p-4 border-b">
+          <h2 class="text-lg font-semibold">Channels</h2>
+        </div>
+
+        <div class="overflow-y-auto max-h-[70vh]">
+          <ul class="divide-y divide-gray-200">
+            <li
+              *ngFor="let channel of channels"
+              class="p-4 hover:bg-gray-50 cursor-pointer transition"
+              [ngClass]="{'bg-blue-50': selectedChannel?.id === channel.id}"
+              (click)="selectChannel(channel)"
+            >
+              <div class="flex items-center justify-between">
+                <div>
+                  <h3 class="font-medium text-gray-900">{{ channel.name }}</h3>
+                  <p class="text-sm text-gray-500">
+                    <ng-container *ngIf="channel.dateFrom">
+                      From: {{ channel.dateFrom | date:'mediumDate' }}
+                    </ng-container>
+                    <ng-container *ngIf="channel.dateTo">
+                      To: {{ channel.dateTo | date:'mediumDate' }}
+                    </ng-container>
+                    <ng-container *ngIf="!channel.dateTo && channel.dateFrom">
+                      (Active)
+                    </ng-container>
+                  </p>
+                </div>
+                <div class="flex space-x-2">
+                  <button
+                    class="text-green-600 hover:text-green-900"
+                    (click)="editChannel(channel); $event.stopPropagation()"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="h-5 w-5"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                      />
+                    </svg>
+                  </button>
+                  <button
+                    class="text-red-600 hover:text-red-900"
+                    (click)="confirmDeleteChannel(channel); $event.stopPropagation()"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="h-5 w-5"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                      />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </li>
+
+            <li
+              *ngIf="channels.length === 0"
+              class="p-4 text-center text-gray-500"
+            >
+              No channels available. Add a new channel to get started.
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chart Area (Right Side) -->
+    <div class="lg:col-span-2">
+      <div class="bg-white rounded-lg shadow p-4 h-[75vh]">
+        <div
+          *ngIf="selectedChannel"
+          class="mb-4"
+        >
+          <h2 class="text-lg font-semibold">{{ selectedChannel.name }} - Data Chart</h2>
+          <p class="text-sm text-gray-500">
+            <ng-container *ngIf="selectedChannel.dateFrom">
+              From: {{ selectedChannel.dateFrom | date:'medium' }}
+            </ng-container>
+            <ng-container *ngIf="selectedChannel.dateTo">
+              To: {{ selectedChannel.dateTo | date:'medium' }}
+            </ng-container>
+          </p>
+        </div>
+
+        <div
+          *ngIf="!selectedChannel"
+          class="flex items-center justify-center h-full"
+        >
+          <div class="text-center text-gray-500">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-16 w-16 mx-auto mb-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+              />
+            </svg>
+            <p class="text-lg">Select a channel to view its data</p>
+          </div>
+        </div>
+
+        <div
+          *ngIf="selectedChannel"
+          class="h-full"
+        >
+          <div
+            #chartContainer
+            class="h-full w-full"
+          ></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Delete Confirmation Modal -->
+<div
+  *ngIf="channelToDelete"
+  class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+>
+  <div class="bg-white rounded-lg shadow-lg max-w-md w-full p-6">
+    <h3 class="text-xl font-semibold mb-4">Confirm Delete</h3>
+    <p class="mb-6">Are you sure you want to delete the channel "{{ channelToDelete.name }}"? This action cannot be undone.</p>
+
+    <div class="flex justify-end space-x-3">
+      <button
+        class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500"
+        (click)="cancelDelete()"
+      >
+        Cancel
+      </button>
+      <button
+        class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
+        (click)="deleteChannel()"
+      >
+        Delete
+      </button>
+    </div>
+  </div>
+</div>

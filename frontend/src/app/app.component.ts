@@ -1,10 +1,12 @@
 import { Component } from '@angular/core';
+import { LayoutComponent } from './shared/components/layout/layout.component';
 
 @Component({
   selector: 'app-root',
+  imports: [LayoutComponent],
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  styleUrl: './app.component.css',
 })
 export class AppComponent {
-  title = 'app';
+  title = 'Well Explorer';
 }

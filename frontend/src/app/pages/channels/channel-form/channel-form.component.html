@@ -1,0 +1,92 @@
+<!-- channel-form.component.html -->
+<form
+  [formGroup]="channelForm"
+  (ngSubmit)="onSubmit()"
+  class="p-6"
+>
+  <div class="space-y-4">
+    <!-- Channel Name -->
+    <div class="form-group">
+      <label
+        for="name"
+        class="block text-sm font-medium text-gray-700 mb-1"
+      >Channel Name*</label>
+      <input
+        type="text"
+        id="name"
+        formControlName="name"
+        class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        placeholder="Enter channel name"
+      >
+      <div
+        *ngIf="f['name'].touched && f['name'].invalid"
+        class="text-red-500 text-sm mt-1"
+      >
+        <div *ngIf="f['name'].errors?.['required']">Channel name is required.</div>
+      </div>
+    </div>
+
+    <!-- Date Range -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <!-- Date From -->
+      <div class="form-group">
+        <label
+          for="dateFrom"
+          class="block text-sm font-medium text-gray-700 mb-1"
+        >Date From</label>
+        <input
+          type="date"
+          id="dateFrom"
+          formControlName="dateFrom"
+          class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+      </div>
+
+      <!-- Date To -->
+      <div class="form-group">
+        <label
+          for="dateTo"
+          class="block text-sm font-medium text-gray-700 mb-1"
+        >Date To</label>
+        <input
+          type="date"
+          id="dateTo"
+          formControlName="dateTo"
+          class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+        <div
+          *ngIf="f['dateTo'].touched && f['dateTo'].invalid"
+          class="text-red-500 text-sm mt-1"
+        >
+          <div *ngIf="f['dateTo'].errors?.['dateOrder']">End date must be after start date.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Status Message -->
+    <div
+      *ngIf="formError"
+      class="p-3 bg-red-100 text-red-800 rounded-md"
+    >
+      {{ formError }}
+    </div>
+  </div>
+
+  <!-- Form Actions -->
+  <div class="mt-6 flex justify-end space-x-3">
+    <button
+      type="button"
+      class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500"
+      (click)="onCancel()"
+    >
+      Cancel
+    </button>
+    <button
+      type="submit"
+      class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+      [disabled]="channelForm.invalid"
+    >
+      {{ channel ? 'Update Channel' : 'Create Channel' }}
+    </button>
+  </div>
+</form>
