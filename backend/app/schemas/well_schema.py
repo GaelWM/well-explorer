@@ -32,8 +32,8 @@ class WellCreate(WellBase):
 # Properties to receive on well update
 class WellUpdate(BaseModel):
     name: Optional[str] = Field(None, description="Name of the well", min_length=1)
-    latitude: Optional[float] = Field(None, description="Latitude in decimal degrees", ge=-90, le=90)
-    longitude: Optional[float] = Field(None, description="Longitude in decimal degrees", ge=-180, le=180)
+    latitude: Optional[float] = Field(None, description="Latitude in decimal degrees")
+    longitude: Optional[float] = Field(None, description="Longitude in decimal degrees")
     lift_type: Optional[str] = Field(None, description="Type of lift mechanism")
     region: Optional[str] = Field(None, description="Region where the well is located", min_length=1)
     installation_date: Optional[date] = Field(None, description="Date when the well was installed")

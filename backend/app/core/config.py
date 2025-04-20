@@ -18,7 +18,7 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 8  # 8 days
     
     # CORS
-    CORS_ORIGINS: List[str] = ['http://localhost:4200', 'http://localhost:4300']
+    CORS_ORIGINS: List[str] = ['http://localhost:4200', 'http://localhost:4300', 'http://localhost:8000']
 
     @field_validator("CORS_ORIGINS", mode="before")
     @classmethod
