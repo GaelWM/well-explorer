@@ -50,11 +50,22 @@ export class ChannelFormComponent implements OnInit {
   initForm(): void {
     this.channelForm = this.fb.group(
       {
-        id: [this.channel?.id || null],
+        id: [this.channel?.id || this.data.channel?.id || null],
         well_id: [this.data.well_id || this.channel?.well_id],
-        name: [this.channel?.name || '', [Validators.required]],
-        date_from: [this.formatDateForInput(this.channel?.date_from || null)],
-        date_to: [this.formatDateForInput(this.channel?.date_to || null)],
+        name: [
+          this.data.channel?.name || this.channel?.name,
+          [Validators.required],
+        ],
+        date_from: [
+          this.formatDateForInput(
+            this.data.channel?.date_from || this.channel?.date_from || null
+          ),
+        ],
+        date_to: [
+          this.formatDateForInput(
+            this.data.channel?.date_to || this.channel?.date_to || null
+          ),
+        ],
       },
       { validators: this.dateOrderValidator }
     );
