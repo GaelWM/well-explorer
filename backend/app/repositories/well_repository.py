@@ -63,3 +63,12 @@ class WellRepository:
     @staticmethod
     def get_wells_by_region(db: Session, region: str) -> List[Well]:
         return db.query(Well).filter(func.lower(Well.region) == region.lower()).all()
+    
+    @staticmethod
+    def get_wells_by_depth(db: Session, depth: int) -> List[str]:
+        wells = db.query(Well).filter(Well.depth > depth)
+        wellNames: List[str] = []
+        for well in wells:
+            wellNames.append(well.name)
+    
+        return wellNames

@@ -53,3 +53,8 @@ def get_wells_by_region(region: str, db: Session = Depends(get_db)):
     Get wells by region.
     """
     return WellController.get_wells_by_region(db, region=region)
+
+@router.get('/depth/{depth}', response_model=List[str])
+def get_wells_by_depth(depth: int, db: Session = Depends(get_db)):
+    return WellController.get_wells_by_depth(db, depth)
+

@@ -44,3 +44,11 @@ class WellController:
         if not wells:
             raise HTTPException(status_code=404, detail=f"No wells found in region {region}")
         return wells
+    
+
+    @staticmethod
+    def get_wells_by_depth(db: Session, depth: int) -> List[str]:
+        wellNames = WellRepository.get_wells_by_depth(db, depth)
+        if not wellNames:
+            raise HTTPException(status_code=404, detail=f"No wells found with depth greater than {depth}")
+        return wellNames

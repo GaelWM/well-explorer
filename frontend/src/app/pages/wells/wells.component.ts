@@ -12,6 +12,7 @@ import { FormsModule } from '@angular/forms';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { RouterLink } from '@angular/router';
 import { ConfirmDialogService } from '../../shared/components/confirm-dialog/confirm-dialog.service';
+import { MapComponent } from '../map-view/map/map.component';
 import { WellFormComponent } from './well-form/well-form.component';
 import { LiftType, Well, WellStatus, wellStatusOptions } from './well.model';
 import { WellsService } from './wells.service';
@@ -19,7 +20,13 @@ import { WellsService } from './wells.service';
 @Component({
   selector: 'app-wells',
   templateUrl: './wells.component.html',
-  imports: [CommonModule, FormsModule, MatDialogModule, RouterLink],
+  imports: [
+    CommonModule,
+    FormsModule,
+    MatDialogModule,
+    RouterLink,
+    MapComponent,
+  ],
 })
 export class WellsComponent {
   readonly wellService = inject(WellsService);
@@ -52,6 +59,7 @@ export class WellsComponent {
   // Filters
   statusFilter: string = '';
   regionFilter: string = '';
+  depthFilter: number | undefined = undefined;
 
   // Selected well for details view
   selectedWell: Well | null = null;
@@ -92,6 +100,14 @@ export class WellsComponent {
       // Apply region filter
       if (this.regionFilter) {
         wells = wells.filter((well) => well.region === this.regionFilter);
+      }
+
+      // Depth filter
+      const depthFilter = this.depthFilter;
+      if (depthFilter !== undefined) {
+        wells = wells.filter((w) => {
+          return w.depth > depthFilter;
+        });
       }
 
       return wells;
